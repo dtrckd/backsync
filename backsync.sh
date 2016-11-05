@@ -9,7 +9,7 @@ if [ -d "$last_arg" ]; then
 fi
 
 IN="./$D/"
-OUT="/media/joker/TOSHIBA EXT/SC/$D/"
+OUT="/media/joker/TOSHIBA EXT/$D/"
 
 SIMUL="-n"
 OPTS="--update --no-o --no-g --no-p  --modify-window=1 --iconv=iso-8859-1,utf8"
