@@ -14,7 +14,8 @@ fi
 ### Target
 DIR_TAR="$D/"
 
-PREFIX_DST_LOCAL="/media/$USER/TOSHIBA EXT/"
+PREFIX_DST_LOCAL=""
+#PREFIX_DST_LOCAL="/media/$USER/TOSHIBA EXT/"
 
 ### Domains
 # Known ssh server
@@ -31,7 +32,7 @@ if [ -e ".rsync_include" ]; then
     FILTER_F="--exclude-from=.rsync_include"
 fi
 
-EXTRA="--size-only"
+#FILTER="--size-only"
 
 #COMPRESS="--compress"
 FORCE="0"
@@ -65,9 +66,9 @@ for i in `seq 1 $nbarg`; do
         elif [ "$arg" == "-f" ]; then # force the backup
             FORCE="1"
         elif [ "$arg" == "--safe" ]; then # don't remove anything
-            EXTRA="$EXTRA --max-delete=0"
+            OPTS="$OPTS --max-delete=0"
         elif [ "$arg" == "--size" ]; then # size only
-            EXTRA="$EXTRA --size-only"
+            OPTS="$OPTS --size-only"
         elif [ "$arg" == "--nogrep" ]; then # size only
             GREPGIT="0"
         elif [ "$arg" == "-ss" -o "$arg" == "--size" ]; then # simul + size of files
@@ -75,7 +76,10 @@ for i in `seq 1 $nbarg`; do
             FORCE="1"
             SIMUL="2"
         elif [ "$arg" == "-exreg" ]; then # exclusion regex
-            FILTER="--exclude=$2"
+            OPTS="--exclude=$2"
+            shift
+        elif [ "$arg" == "--checksum" ]; then # exclusion regex
+            OPTS="$OPTS --checksum"
             shift
         elif [ "$arg/" == "$DIR_TAR" ]; then
             continue
@@ -120,7 +124,7 @@ if [ "$FORCE" == "0" ]; then
 fi
 
 FILTER="$FILTER $FILTER_F"
-OPTS="$OPTS $VERBOSE $COMPRESS $REMOTE $FILTER $EXTRA"
+OPTS="$OPTS $VERBOSE $COMPRESS $REMOTE $FILTER"
 
 PADD=$(echo "--"$a{1..20}e)
 echo -e "$PADD\n[ Rsync Stage ...]"
