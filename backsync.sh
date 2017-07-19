@@ -12,19 +12,18 @@ else
 fi
 
 ### Target
-DIR_TAR="$D/"
+#DIR_TAR="$D/"
+DIR_TAR="workInProgress/"
 
-PREFIX_DST_LOCAL=""
-#PREFIX_DST_LOCAL="/media/$USER/TOSHIBA EXT/"
+
+PREFIX_SRC="../"
+PREFIX_DST="/media/$USER/MARS/"
 
 ### Domains
-# Known ssh server
 #NET_USER="dtrckd"
-#Domain=""
+#Domain="domain"
 PREFIX_DST_NET="${NET_USER}@${Domain}:~/"
 
-# rsync options (--force to del no-empty directory, -a = -rltpfoD)
-PREFIX_DST=$PREFIX_DST_LOCAL
 
 OPTS="-a -u --delete-after --modify-window=10 --fuzzy --progress --stats -h --no-o --no-g --no-p -O --max-size=2G"
 
@@ -56,10 +55,10 @@ for i in `seq 1 $nbarg`; do
             VERBOSE="-vv -i"
         elif [ "$arg" == "--purge" ]; then # remove some
             PURGE="1"
-        elif [ "$arg" == "-l" -o "$arg" == "--local" ]; then
-            PREFIX_DST=$PREFIX_DST_LOCAL
         elif [ "$arg" == "-n" -o "$arg" == "--net" ]; then
             PREFIX_DST=$PREFIX_DST_NET
+            FILTER_F="--exclude-from=.rsync_include_expe"
+            #FILTER_F="--exclude-from=.rsync_include_net"
             NET="1"
         elif [ "$arg" == "--down" ]; then # update from backup
             DOWN="1"
