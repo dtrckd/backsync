@@ -15,6 +15,7 @@ fi
 DIR_TAR="$D/"
 
 PREFIX_DST_LOCAL="/media/$USER/TOSHIBA EXT/"
+PREFIX_DST_LOCAL="/media/$USER/NIAK/"
 
 ### Domains
 # Known ssh server
