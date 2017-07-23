@@ -2,29 +2,30 @@
 
 ### Backup Script
 
-last_arg="${@: -1}"
+#dst_arg="${@: -1}"
+src_arg="$(($#-1))"
+dst_arg="$(($#-0))"
+# --
+src_arg="${!src_arg}"
+dst_arg="${!dst_arg}"
 
-if [ -d "$last_arg" ]; then
-    D="$last_arg"
-    PREFIX_DST="./"
+if [[ -d "$src_arg" && -d "$dst_arg" ]]; then
+    PREFIX_SRC="./"
+    PREFIX_DST="$dst_arg"
+    DIR_TAR="$src_arg"/
 else
-    PREFIX_DST="../"
+    PREFIX_SRC="../"
+    PREFIX_DST="/media/$USER/MARS/"
+    DIR_TAR="workInProgress/"
 fi
 
 ### Target
-DIR_TAR="$D/"
-
-PREFIX_DST_LOCAL="/media/$USER/TOSHIBA EXT/"
-PREFIX_DST_LOCAL="/media/$USER/NIAK/"
 
 ### Domains
-# Known ssh server
 #NET_USER="dtrckd"
-#Domain=""
+#Domain="domain"
 PREFIX_DST_NET="${NET_USER}@${Domain}:~/"
 
-# rsync options (--force to del no-empty directory, -a = -rltpfoD)
-PREFIX_DST=$PREFIX_DST_LOCAL
 
 OPTS="-a -u --delete-after --modify-window=10 --fuzzy --progress --stats -h --no-o --no-g --no-p -O --max-size=2G"
 
@@ -32,14 +33,13 @@ if [ -e ".rsync_include" ]; then
     FILTER_F="--exclude-from=.rsync_include"
 fi
 
-EXTRA="--size-only"
+#FILTER="--size-only"
 
 #COMPRESS="--compress"
 FORCE="0"
-DOWN="0"
-NET="0"
+DOWN="0" # inverse direction of backup
 SIMUL="0" # calc size of each files to be transfered
-GREPGIT="1"
+GREPGIT="1" # don't show .git/* files
 
 ##############
 ### Args Parse
@@ -56,19 +56,18 @@ for i in `seq 1 $nbarg`; do
             VERBOSE="-vv -i"
         elif [ "$arg" == "--purge" ]; then # remove some
             PURGE="1"
-        elif [ "$arg" == "-l" -o "$arg" == "--local" ]; then
-            PREFIX_DST=$PREFIX_DST_LOCAL
         elif [ "$arg" == "-n" -o "$arg" == "--net" ]; then
             PREFIX_DST=$PREFIX_DST_NET
-            NET="1"
+            FILTER_F="--exclude-from=.rsync_include_expe"
+            #FILTER_F="--exclude-from=.rsync_include_net"
         elif [ "$arg" == "--down" ]; then # update from backup
             DOWN="1"
         elif [ "$arg" == "-f" ]; then # force the backup
             FORCE="1"
         elif [ "$arg" == "--safe" ]; then # don't remove anything
-            EXTRA="$EXTRA --max-delete=0"
+            OPTS="$OPTS --max-delete=0"
         elif [ "$arg" == "--size" ]; then # size only
-            EXTRA="$EXTRA --size-only"
+            OPTS="$OPTS --size-only"
         elif [ "$arg" == "--nogrep" ]; then # size only
             GREPGIT="0"
         elif [ "$arg" == "-ss" -o "$arg" == "--size" ]; then # simul + size of files
@@ -76,7 +75,10 @@ for i in `seq 1 $nbarg`; do
             FORCE="1"
             SIMUL="2"
         elif [ "$arg" == "-exreg" ]; then # exclusion regex
-            FILTER="--exclude=$2"
+            OPTS="--exclude=$2"
+            shift
+        elif [ "$arg" == "--checksum" ]; then # exclusion regex
+            OPTS="$OPTS --checksum"
             shift
         elif [ "$arg/" == "$DIR_TAR" ]; then
             continue
@@ -120,8 +122,7 @@ if [ "$FORCE" == "0" ]; then
     exit 1
 fi
 
-FILTER="$FILTER $FILTER_F"
-OPTS="$OPTS $VERBOSE $COMPRESS $REMOTE $FILTER $EXTRA"
+OPTS="$OPTS $VERBOSE $COMPRESS $REMOTE $FILTER $FILTER_F"
 
 PADD=$(echo "--"$a{1..20}e)
 echo -e "$PADD\n[ Rsync Stage ...]"
