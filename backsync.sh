@@ -138,7 +138,7 @@ if [ "$SIMUL" == "2" ]; then
             RES2=$TTT
             #echo "$RES2"
         fi
-    done < <(echo "$RES") # if not, the pipe lose variable up propagation
+    done < <(echo "$RES") # if not, the pipe loose variable up propagation
     echo "$RES2"
 
 else
