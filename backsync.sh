@@ -74,7 +74,7 @@ for i in `seq 1 $nbarg`; do
             OPTS="$OPTS --dry-run"
             FORCE="1"
             SIMUL="2"
-        elif [ "$arg" == "-exreg" ]; then # exclusion regex
+        elif [ "$arg" == "--exclude" ]; then # exclusion regex
             OPTS="--exclude=$2"
             shift
         elif [ "$arg" == "--checksum" ]; then # exclusion regex
