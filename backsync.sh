@@ -36,9 +36,10 @@ fi
 #FILTER="--size-only"
 
 #COMPRESS="--compress"
+NET="0"
 FORCE="0"
-DOWN="0" # inverse direction of backup
 SIMUL="0" # calc size of each files to be transfered
+DOWN="0" # inverse direction of backup
 GREPGIT="1" # don't show .git/* files
 
 ##############
@@ -60,10 +61,13 @@ for i in `seq 1 $nbarg`; do
             PREFIX_DST=$PREFIX_DST_NET
             FILTER_F="--exclude-from=.rsync_include_expe"
             #FILTER_F="--exclude-from=.rsync_include_net"
+            NET="1"
         elif [ "$arg" == "--down" ]; then # update from backup
             DOWN="1"
         elif [ "$arg" == "-f" ]; then # force the backup
             FORCE="1"
+        elif [ "$arg" == "-z" -o "$arg" == "--compress" ]; then # force the backup
+            COMPRESS="--compress"
         elif [ "$arg" == "--safe" ]; then # don't remove anything
             OPTS="$OPTS --max-delete=0"
         elif [ "$arg" == "--size" ]; then # size only
@@ -74,12 +78,15 @@ for i in `seq 1 $nbarg`; do
             OPTS="$OPTS --dry-run"
             FORCE="1"
             SIMUL="2"
-        elif [ "$arg" == "--exclude" ]; then # exclusion regex
+        #elif [ "$arg" == "--exclude" ]; then # exclusion regex
+        elif [ "$arg" == "-exreg" ]; then # exclusion regex
             OPTS="--exclude=$2"
             shift
         elif [ "$arg" == "--checksum" ]; then # exclusion regex
             OPTS="$OPTS --checksum"
             shift
+        elif [ "$arg" == "--make" ]; then
+            Make="1"
         elif [ "$arg/" == "$DIR_TAR" ]; then
             continue
         else
@@ -126,7 +133,7 @@ OPTS="$OPTS $VERBOSE $COMPRESS $REMOTE $FILTER $FILTER_F"
 
 PADD=$(echo "--"$a{1..20}e)
 echo -e "$PADD\n[ Rsync Stage ...]"
-if [ "$SIMUL" == "2" ]; then
+if [ "$SIMUL" == "2" ]; then #XULGet file size 
     echo "[ Simulation ]"
     RES=`/usr/bin/rsync ${OPTS} "${PREFIX_SRC}${DIR_TAR1}" "${PREFIX_DST}${DIR_TAR2}"`
     RES2=$RES
@@ -146,13 +153,16 @@ else
         echo "[ Simulation ]"
     fi
     echo ''
-    if [ "${GREPGIT}" == 1 ]; then
+    if [ "${GREPGIT}" == "1" ]; then
         /usr/bin/rsync ${OPTS} "${PREFIX_SRC}${DIR_TAR1}" "${PREFIX_DST}${DIR_TAR2}" | grep -vE "\.git"
     else
         /usr/bin/rsync ${OPTS} "${PREFIX_SRC}${DIR_TAR1}" "${PREFIX_DST}${DIR_TAR2}" 
     fi
     echo "/usr/bin/rsync ${OPTS} ${PREFIX_SRC}${DIR_TAR1} ${PREFIX_DST}${DIR_TAR2}"
+fi
 
+if [ "$SIMUL" == "0" -a "$Make" == "1" ]; then
+    ssh $NET_USER@$Domain "cd /home/ama/adulac/workInProgress/networkofgraphs/process/pymake && make"
 fi
 
 echo ''
