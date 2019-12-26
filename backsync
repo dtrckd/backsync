@@ -12,14 +12,16 @@ dst_arg="$(($#-0))"
 src_arg="${!src_arg}"
 dst_arg="${!dst_arg}"
 
-if [[ ! -z "$src_arg" && ! -z "$dst_arg" ]]; then
+
+if [[ ! -z "$src_arg" && ! -z "$dst_arg" && $# > 2 ]]; then
     PREFIX_SRC="$src_arg"/
     PREFIX_DST="$dst_arg"/
     DIR_TAR=
 else
     PREFIX_SRC="../"
     PREFIX_DST="/media/$USER/WAVED/"
-    DIR_TAR="workInProgress/"
+    DIR_TAR="${PWD##*/}/" # name of the current directory
+    #DIR_TAR="workInProgress/"
 fi
 
 ### Target
