@@ -141,6 +141,10 @@ fi
 
 OPTS="$OPTS $VERBOSE $COMPRESS $REMOTE $FILTER $FILTER_F"
 
+#GITIGN="--exclude-from=\"$(git -C ${PREFIX_SRC}${DIR_TAR1} ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)\""
+
+OPTS="$OPTS $GITIGN"
+
 PADD=$(echo "--"$a{1..20}e)
 echo -e "$PADD\n[ Rsync Stage ...]"
 if [ "$SIMUL" == "2" ]; then #XULGet file size
