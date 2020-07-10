@@ -21,7 +21,7 @@ else
     PREFIX_SRC="../"
     PREFIX_DST="/media/$USER/WAVED/"
     DIR_TAR="${PWD##*/}/" # name of the current directory
-    #DIR_TAR="workInProgress/"
+    #DIR_TAR="main/"
 fi
 
 ### Target
@@ -176,7 +176,7 @@ else
 fi
 
 if [ "$SIMUL" == "0" -a "$Make" == "1" ]; then
-    ssh $NET_USER@$Domain "cd /home/ama/adulac/workInProgress/networkofgraphs/process/pymake && make"
+    ssh $NET_USER@$Domain "cd /home/ama/adulac/main/networkofgraphs/process/pymake && make"
 fi
 
 echo ''
