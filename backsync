@@ -34,8 +34,8 @@ PREFIX_DST_NET="${NET_USER}@${Domain}:~/"
 
 OPTS="-a -u --delete-after --modify-window=10 --fuzzy --progress --stats -h --no-o --no-g --no-p -O --max-size=2G"
 
-if [ -e ".rsync_include" ]; then
-    FILTER_F="--exclude-from=.rsync_include"
+if [ -e "$PREFIX_SRC/.rsync_include" ]; then
+    FILTER_F="--exclude-from=$PREFIX_SRC/.rsync_include"
 fi
 
 #FILTER="--size-only"
